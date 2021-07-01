@@ -10,7 +10,32 @@ class Data_Reader:
         Parameters
         ----------
             filename (str): 
-                The file to be read
+                The file to be read, must be chosen from the following:
+                
+                Commodities
+                -----------
+                'Al' - LME 3 month aluminium futures
+                'Cu' - LME 3 month copper futures
+                'Corn' - CME rolling active month corn futures
+
+                Currencies
+                ----------
+                'EURCHF' - spot Euro / Swiss currency pair
+                'EURUSD' - spot Euro / US dollar currency pair
+                'GBPUSD' - spot British pound / US dollar currency pair
+
+                Fixed Income
+                ------------
+                'Bund10y' - rolling 10y German Bund yield
+                'Gilt10y' - rolling 10y British Gilt yield
+                'Treasury10y' - rolling 10y US Treasury yield
+
+                Equities
+                --------
+                'Amazon' - NASDQ listed Amazon.com Inc. common stock
+                'Google' - NASDAQ Alphabet Inc. class A common stock
+
+            Note, all quotes are daily closing prices or yield
         
         Example
         -------
@@ -19,9 +44,11 @@ class Data_Reader:
 
         import pandas as pd
 
+        # creating variables for directory traversing and file reading
         directory_str = './data/'
         suffix_str = '.csv'
 
+        # creating file_str to read relevant file
         self.file_str = file_str
         self.test_year = test_year
         self.normalise_call = False
