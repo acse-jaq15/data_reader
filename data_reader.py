@@ -56,7 +56,6 @@ class Data_Reader:
         
         self.data = pd.read_csv(directory_str+file_str+suffix_str)
         self.data['date'] = pd.to_datetime(self.data['date'], dayfirst=True)
-        self.data['date'] = self.data['date'].dt.date
         self.data['year'] = self.data['date'].dt.year
 
     def extract_train_test(self):
