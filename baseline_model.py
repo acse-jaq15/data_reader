@@ -52,5 +52,4 @@ class Baseline_Model:
             self.y_pred.append(np.mean(X_data[i]))
 
         self.y_pred = np.array(self.y_pred, ndmin=2)
-        self.y_pred = np.reshape(self.y_pred, (test_len -
-                                               self.window_horizon, 1))
+        self.y_pred = np.reshape(self.y_pred, (test_len, 1))
