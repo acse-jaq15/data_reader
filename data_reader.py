@@ -1,4 +1,5 @@
 """Module containing a class to handle data pre-processing"""
+import pandas as pd
 
 
 class Data_Reader:
@@ -44,8 +45,6 @@ class Data_Reader:
             Data_Reader('Al', 2019)
         """
 
-        import pandas as pd
-
         # creating variables for directory traversing and file reading
         directory_str = './data/'
         suffix_str = '.csv'
@@ -53,9 +52,12 @@ class Data_Reader:
         # creating file_str to read relevant file
         self.file_str = file_str
         self.test_year = test_year
-        
+
+        # converting ['date'] column to datetime values
         self.data = pd.read_csv(directory_str+file_str+suffix_str)
         self.data['date'] = pd.to_datetime(self.data['date'], dayfirst=True)
+
+        # inserting ['year'] column to allow for mask filtering
         self.data['year'] = self.data['date'].dt.year
 
     def extract_train_test(self):
@@ -79,16 +81,21 @@ class Data_Reader:
             None
         """
 
+        # recordring max and min year values
         max_year = max(self.data['year'])
         min_year = min(self.data['year'])
 
+        # raising an exception if test_year is not equal to max_year
         if not max_year == self.test_year:
             raise ValueError('Test year is not last year of dataset')
 
+        # raising an exception if test_year is not in dataset
         if min_year > self.test_year:
             raise ValueError('Test year is not included in dataset')
 
+        # creating a mask for filtering
         mask = self.data['date'].dt.year == int(self.test_year)
 
+        # creating .train_data and .test_data attributes based on year
         self.train_data = self.data.price[~mask]
         self.test_data = self.data.price[mask]
