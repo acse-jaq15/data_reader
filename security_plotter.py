@@ -61,17 +61,13 @@ class Security_Plotter:
                 'Google': 'Alphabet Inc. class A common stock price'
                 }
 
-    def single_plot(self, train_len, window_len):
+    def single_plot(self):
         """
         Method to plot y_acutal, y_pred and y_dummy
 
         Parameters
         ----------
-            train_len (int):
-                an integer recording the length of the training dataset
-
-            window_len (int):
-                an integer recording the length of the prediction window
+            None
 
         Example
         -------
@@ -104,7 +100,7 @@ class Security_Plotter:
         # setting image size inches
         fig.set_size_inches(12, 6)
         # plotting the various y values
-        ax.plot(series_dates, self.y_acutal, label='Acutal Price')
+        ax.plot(series_dates, self.y_actual, label='Acutal Price')
         ax.plot(series_dates, self.y_pred, label='Predicted Price')
         ax.plot(series_dates, self.y_dummy, label='Dummy Price')
         # setting x axis label
