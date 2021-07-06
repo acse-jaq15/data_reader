@@ -47,6 +47,7 @@ class Security_Plotter:
         self.y_dummy = y_dummy
         self.train_len = train_len
         self.window_len = window_len
+        self.security_str = security_str
         self.security_dict = {
                 'Al': 'LME Aluminium 3m futures price',
                 'Cu': 'LME Copper 3m futures price',
