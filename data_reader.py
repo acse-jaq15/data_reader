@@ -1,5 +1,7 @@
 """Module containing a class to handle data pre-processing"""
+import numpy as np
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 
 
 class Data_Reader:
@@ -99,3 +101,72 @@ class Data_Reader:
         # creating .train_data and .test_data attributes based on year
         self.train_data = self.data.price[~mask]
         self.test_data = self.data.price[mask]
+
+        # creating an instance of our scaler for normalisation
+        scaler = MinMaxScaler(feature_range=(0, 1))
+
+        # getting the length of training and test datasets
+        self.train_len = len(self.train_data)
+        self.test_len = len(self.test_data)
+
+        # converting to a numpy array
+        self.train_data = np.array(self.train_data, ndmin=2)
+        # transposing the array to have leading axis as 1
+        self.train_data = self.train_data.T
+        # normalising the data
+        self.train_data_norm = scaler.fit_transform(self.train_data)
+
+        # converting to a numpy array
+        self.test_data = np.array(self.test_data, ndmin=2)
+        # transposing the array to have leading axis as 1
+        self.test_data = self.test_data.T
+        # normalising the data
+        self.test_data_norm = scaler.fit_transform(self.test_data)
+
+    def extract_xy(self, window_len):
+
+        # defining the prediction horizon
+        self.window_len = window_len
+
+        # creating lists to store X and y values for training and testing
+        self.X_train = []
+        self.y_train = []
+        self.X_test = []
+        self.y_test = []
+
+        # a loop to iterate through the training dataset
+        for i in range(self.window_len, self.train_len):
+            # appending window_len values to X_train
+            self.X_train.append(self.train_data_norm[i - self.window_len:i])
+            # appending single y value to y_train
+            self.y_train.append(self.train_data[i])
+
+        # converting X_train and y_train to numpy arrays
+        self.X_train = np.array(self.X_train)
+        self.y_train = np.array(self.y_train)
+
+        # reshaping to enforce shape requirements
+        self.X_train = np.reshape(self.X_train, (self.X_train.shape[0],
+                                                 self.X_train.shape[1], 1))
+
+        # a loop to iterate through the test dataset
+        for i in range(self.window_len, self.test_len):
+            # appending window_len values to X_test
+            self.X_test.append(self.test_data[i - self.window_len:i])
+            # appending single y value to y_test
+            self.y_test.append(self.test_data[i])
+
+        # converting X_test and y_test to a numpy arrays
+        self.X_test = np.array(self.X_test)
+        self.y_test = np.array(self.y_test)
+
+        # reshaping to enforce shape requirements
+        self.X_test = np.reshape(self.X_test, (self.X_test.shape[0],
+                                               self.X_test.shape[1], 1))
+
+        # assertions to ensure datasets are of correct sizes
+        assert self.X_train.shape[0] == (self.train_len - self.window_len)
+        assert self.X_train.shape[1] == self.window_len
+
+        assert self.X_test.shape[0] == (self.test_len - self.window_len)
+        assert self.X_test.shape[1] == self.window_len
