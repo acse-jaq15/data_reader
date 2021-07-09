@@ -44,7 +44,7 @@ class Data_Reader:
 
         Example
         -------
-            Data_Reader('Al', 2019)
+            d_reader = Data_Reader('Al', 2019)
         """
 
         # creating variables for directory traversing and file reading
@@ -66,7 +66,7 @@ class Data_Reader:
         """
         Method to extract training and test datasets
 
-        Creates Data_reader.train_data and Data_reader.test_data attributes
+        Creates Data_reader.train_data and .test_data attributes
 
         Parameters
         ----------
@@ -124,6 +124,28 @@ class Data_Reader:
         self.test_data_norm = scaler.fit_transform(self.test_data)
 
     def extract_xy(self, window_len):
+        """
+        Method to extract X and y values from training and test datasets
+
+        Creates Data_reader.X_train, .y_train, .X_test and .y_test attributes
+
+        Parameters
+        ----------
+            window_len (int):
+                length of prediction horizon in days
+
+        Example
+        -------
+            d_reader.extract_xy()
+            d_reader.X_train
+            d_reader.y_train
+            d_reader.X_test
+            d_reader.y_test
+
+        Returns
+        -------
+            None
+        """
 
         # defining the prediction horizon
         self.window_len = window_len
@@ -170,3 +192,55 @@ class Data_Reader:
 
         assert self.X_test.shape[0] == (self.test_len - self.window_len)
         assert self.X_test.shape[1] == self.window_len
+
+    def extract_real_prices(self, y_pred, y_dummy):
+        """
+        Method to extract actual, predicted and dummy unnormalised prices
+
+        Creates Data_reader.actual_price, .predicted_price and .dummy_price
+        attributes
+
+        Parameters
+        ----------
+            window_len (int):
+                length of prediction horizon in days
+
+        Example
+        -------
+            d_reader.extract_xy()
+            d_reader.X_train
+            d_reader.y_train
+            d_reader.X_test
+            d_reader.y_test
+
+        Returns
+        -------
+            None
+        """
+
+        # creating an instance of our scaler for normalisation
+        scaler = MinMaxScaler(feature_range=(0, 1))
+
+        # reversing normalisation
+        self.predicted_price = scaler.inverse_transform(y_pred)
+
+        # retrieving real price from self.data
+        self.y_true = self.data.price[self.train_len + self.window_len:]
+        # converting to a numpy array
+        self.y_true = np.array(self.y_true, ndmin=2)
+        # transposing the array to have leading axis as 1
+        self.y_true = self.y_true.T
+        # normalising the acutal price
+        self.y_true = scaler.fit_transform(self.y_true)
+        # converting to a numpy array
+        self.actual_price = np.array(self.y_true)
+        # reversing normalisation
+        self.actual_price = scaler.inverse_transform(self.actual_price)
+
+        # converting y_dummy to real prices
+        self.dummy_price = scaler.inverse_transform(y_dummy)
+
+        # assertions to ensure datasets are of correct sizes
+        assert self.actual_price.shape[0] == (self.test_len - self.window_len)
+        assert self.y_dummy.shape[0] == (self.test_len - self.window_len)
+        assert self.y_dummy.shape[1] == 1
