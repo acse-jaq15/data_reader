@@ -161,7 +161,7 @@ class Data_Reader:
             # appending window_len values to X_train
             self.X_train.append(self.train_data_norm[i - self.window_len:i])
             # appending single y value to y_train
-            self.y_train.append(self.train_data[i])
+            self.y_train.append(self.train_data_norm[i])
 
         # converting X_train and y_train to numpy arrays
         self.X_train = np.array(self.X_train)
