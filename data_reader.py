@@ -103,7 +103,7 @@ class Data_Reader:
         self.test_data = self.data.price[mask]
 
         # creating an instance of our scaler for normalisation
-        scaler = MinMaxScaler(feature_range=(0, 1))
+        self.scaler = MinMaxScaler(feature_range=(0, 1))
 
         # getting the length of training and test datasets
         self.train_len = len(self.train_data)
@@ -114,14 +114,14 @@ class Data_Reader:
         # transposing the array to have leading axis as 1
         self.train_data = self.train_data.T
         # normalising the data
-        self.train_data_norm = scaler.fit_transform(self.train_data)
+        self.train_data_norm = self.scaler.fit_transform(self.train_data)
 
         # converting to a numpy array
         self.test_data = np.array(self.test_data, ndmin=2)
         # transposing the array to have leading axis as 1
         self.test_data = self.test_data.T
         # normalising the data
-        self.test_data_norm = scaler.fit_transform(self.test_data)
+        self.test_data_norm = self.scaler.fit_transform(self.test_data)
 
     def extract_xy(self, window_len):
         """
@@ -218,11 +218,8 @@ class Data_Reader:
             None
         """
 
-        # creating an instance of our scaler for normalisation
-        scaler = MinMaxScaler(feature_range=(0, 1))
-
         # reversing normalisation
-        self.predicted_price = scaler.inverse_transform(y_pred)
+        self.predicted_price = self.scaler.inverse_transform(y_pred)
 
         # retrieving real price from self.data
         self.y_true = self.data.price[self.train_len + self.window_len:]
@@ -231,14 +228,14 @@ class Data_Reader:
         # transposing the array to have leading axis as 1
         self.y_true = self.y_true.T
         # normalising the acutal price
-        self.y_true = scaler.fit_transform(self.y_true)
+        self.y_true = self.scaler.fit_transform(self.y_true)
         # converting to a numpy array
         self.actual_price = np.array(self.y_true)
         # reversing normalisation
-        self.actual_price = scaler.inverse_transform(self.actual_price)
+        self.actual_price = self.scaler.inverse_transform(self.actual_price)
 
         # converting y_dummy to real prices
-        self.dummy_price = scaler.inverse_transform(y_dummy)
+        self.dummy_price = self.scaler.inverse_transform(y_dummy)
 
         # assertions to ensure datasets are of correct sizes
         assert self.actual_price.shape[0] == (self.test_len - self.window_len)
