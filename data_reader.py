@@ -174,9 +174,9 @@ class Data_Reader:
         # a loop to iterate through the test dataset
         for i in range(self.window_len, self.test_len):
             # appending window_len values to X_test
-            self.X_test.append(self.test_data[i - self.window_len:i])
+            self.X_test.append(self.test_data_norm[i - self.window_len:i])
             # appending single y value to y_test
-            self.y_test.append(self.test_data[i])
+            self.y_test.append(self.test_data_norm[i])
 
         # converting X_test and y_test to a numpy arrays
         self.X_test = np.array(self.X_test)
@@ -239,5 +239,5 @@ class Data_Reader:
 
         # assertions to ensure datasets are of correct sizes
         assert self.actual_price.shape[0] == (self.test_len - self.window_len)
-        assert self.y_dummy.shape[0] == (self.test_len - self.window_len)
-        assert self.y_dummy.shape[1] == 1
+        assert y_dummy.shape[0] == (self.test_len - self.window_len)
+        assert y_dummy.shape[1] == 1
