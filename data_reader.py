@@ -79,9 +79,10 @@ class Data_Reader:
 
     def extract_train_test(self):
         """
-        Method to extract training and test datasets
+        Method to extract training, test and validation datasets
 
-        Creates Data_reader.train_data and .test_data attributes
+        Creates Data_reader.train_data, .test_data, .val_train_data
+        and .val_test_data attributes
 
         Parameters
         ----------
@@ -92,6 +93,8 @@ class Data_Reader:
             d_reader.extract_train_test()
             d_reader.train_data
             d_reader.test_data
+            d_reader.val_train_data
+            d_reader.val_test_data
 
         Returns
         -------
@@ -125,6 +128,7 @@ class Data_Reader:
 
         # creating an instance of our scaler for normalisation
         self.scaler = MinMaxScaler(feature_range=(0, 1))
+        self.scaler_val = MinMaxScaler(feature_range=(0, 1))
 
         # getting the length of training and test datasets
         self.train_len = len(self.train_data)
@@ -153,7 +157,7 @@ class Data_Reader:
         # transposing the array to have leading axis as 1
         self.val_train_data = self.val_train_data.T
         # normalising the data
-        self.val_train_data_norm = self.scaler.fit_transform(self.
+        self.val_train_data_norm = self.scaler_val.fit_transform(self.
                                                              val_train_data)
 
         # converting to a numpy array
@@ -161,11 +165,12 @@ class Data_Reader:
         # transposing the array to have leading axis as 1
         self.val_test_data = self.val_test_data.T
         # normalising the data
-        self.val_test_data_norm = self.scaler.fit_transform(self.val_test_data)
+        self.val_test_data_norm = self.scaler_val.fit_transform(self.val_test_data)
 
     def extract_xy(self, window_len):
         """
-        Method to extract X and y values from training and test datasets
+        Method to extract X and y values from training, test and
+        validation datasets
 
         Creates Data_reader.X_train, .y_train, .X_test and .y_test attributes
 
@@ -181,6 +186,10 @@ class Data_Reader:
             d_reader.y_train
             d_reader.X_test
             d_reader.y_test
+            d_reader.X_val_train
+            d_reader.X_val_test
+            d_reader.y_val_train
+            d_reader.y_val_test
 
         Returns
         -------
