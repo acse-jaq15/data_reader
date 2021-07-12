@@ -157,15 +157,16 @@ class Data_Reader:
         # transposing the array to have leading axis as 1
         self.val_train_data = self.val_train_data.T
         # normalising the data
-        self.val_train_data_norm = self.scaler_val.fit_transform(self.
-                                                             val_train_data)
+        self.val_train_data_norm = self.scaler_val.fit_transform(
+            self.val_train_data)
 
         # converting to a numpy array
         self.val_test_data = np.array(self.val_test_data, ndmin=2)
         # transposing the array to have leading axis as 1
         self.val_test_data = self.val_test_data.T
         # normalising the data
-        self.val_test_data_norm = self.scaler_val.fit_transform(self.val_test_data)
+        self.val_test_data_norm = self.scaler_val.fit_transform(
+            self.val_test_data)
 
     def extract_xy(self, window_len):
         """
