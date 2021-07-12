@@ -121,5 +121,3 @@ class Security_Plotter:
         ax.xaxis.set_major_locator(months)
         ax.xaxis.set_major_formatter(d_format)
         ax.xaxis.set_minor_locator(years)
-
-        return fig, ax
