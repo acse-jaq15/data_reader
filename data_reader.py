@@ -318,7 +318,7 @@ class Data_Reader:
         # transposing the array to have leading axis as 1
         self.y_true = self.y_true.T
         # normalising the acutal price
-        self.y_true = self.scaler.fit_transform(self.y_true)
+        #self.y_true = self.scaler.fit_transform(self.y_true)
         # converting to a numpy array
         self.actual_price = np.array(self.y_true)
         # reversing normalisation
