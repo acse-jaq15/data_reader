@@ -62,6 +62,21 @@ class Data_Reader:
         # inserting ['year'] column to allow for mask filtering
         self.data['year'] = self.data['date'].dt.year
 
+        # creating a dictionary of all financial securities to be examined
+        self.security_dict = {
+                        'Al': 'LME Aluminium 3m futures price',
+                        'Cu': 'LME Copper 3m futures price',
+                        'Corn': 'CME rolling active month corn futures price',
+                        'EURCHF': 'Spot Euro/Swiss Franc exchange rate',
+                        'EURUSD': 'Spot Euro/US dollar exchange rate',
+                        'GBPUSD': 'Spot British Pound/US dollar exchange rate',
+                        'Bund10y': '10y German Bund yield',
+                        'Gilt10y': '10y British Gilt yield',
+                        'Treasury10y': '10y US Treasury yield',
+                        'Amazon': 'Amazon.com Inc. common stock price',
+                        'Google': 'Alphabet Inc. class A common stock price'
+                            }
+
     def extract_train_test(self):
         """
         Method to extract training and test datasets
@@ -95,12 +110,18 @@ class Data_Reader:
         if min_year > self.test_year:
             raise ValueError('Test year is not included in dataset')
 
-        # creating a mask for filtering
-        mask = self.data['date'].dt.year == int(self.test_year)
+        # creating a mask for filtering the test set
+        test_mask = self.data['date'].dt.year == int(self.test_year)
+        # creating a mask for filtering the validation set
+        val_mask = self.data['date'].dt.year == int(self.test_year - 1)
 
         # creating .train_data and .test_data attributes based on year
-        self.train_data = self.data.price[~mask]
-        self.test_data = self.data.price[mask]
+        self.train_data = self.data.price[~test_mask]
+        self.test_data = self.data.price[test_mask]
+
+        # creating .val_train_data and .val_test_data attributes based on year
+        self.val_train_data = self.train_data[~val_mask]
+        self.val_test_data = self.train_data[val_mask]
 
         # creating an instance of our scaler for normalisation
         self.scaler = MinMaxScaler(feature_range=(0, 1))
@@ -108,6 +129,10 @@ class Data_Reader:
         # getting the length of training and test datasets
         self.train_len = len(self.train_data)
         self.test_len = len(self.test_data)
+
+        # getting the length of validation training and test datasets
+        self.val_train_len = len(self.val_train_data)
+        self.val_test_len = len(self.val_test_data)
 
         # converting to a numpy array
         self.train_data = np.array(self.train_data, ndmin=2)
@@ -122,6 +147,21 @@ class Data_Reader:
         self.test_data = self.test_data.T
         # normalising the data
         self.test_data_norm = self.scaler.fit_transform(self.test_data)
+
+        # converting to a numpy array
+        self.val_train_data = np.array(self.val_train_data, ndmin=2)
+        # transposing the array to have leading axis as 1
+        self.val_train_data = self.val_train_data.T
+        # normalising the data
+        self.val_train_data_norm = self.scaler.fit_transform(self.
+                                                             val_train_data)
+
+        # converting to a numpy array
+        self.val_test_data = np.array(self.val_test_data, ndmin=2)
+        # transposing the array to have leading axis as 1
+        self.val_test_data = self.val_test_data.T
+        # normalising the data
+        self.val_test_data_norm = self.scaler.fit_transform(self.val_test_data)
 
     def extract_xy(self, window_len):
         """
@@ -156,6 +196,12 @@ class Data_Reader:
         self.X_test = []
         self.y_test = []
 
+        # creating lists to store X and y values for validation
+        self.X_val_train = []
+        self.y_val_train = []
+        self.X_val_test = []
+        self.y_val_test = []
+
         # a loop to iterate through the training dataset
         for i in range(self.window_len, self.train_len):
             # appending window_len values to X_train
@@ -186,12 +232,54 @@ class Data_Reader:
         self.X_test = np.reshape(self.X_test, (self.X_test.shape[0],
                                                self.X_test.shape[1], 1))
 
+        # a loop to iterate through the validation training dataset
+        for i in range(self.window_len, self.val_train_len):
+            # appending window_len values to X_val_train
+            self.X_val_train.append(self.val_train_data_norm[i - self.
+                                    window_len:i])
+            # appending single y value to y_val_train
+            self.y_val_train.append(self.val_train_data_norm[i])
+
+        # converting X_train and y_train to numpy arrays
+        self.X_val_train = np.array(self.X_val_train)
+        self.y_val_train = np.array(self.y_val_train)
+
+        # reshaping to enforce shape requirements
+        self.X_val_train = np.reshape(self.X_val_train,
+                                      (self.X_val_train.shape[0],
+                                       self.X_val_train.shape[1], 1))
+
+        # a loop to iterate through the validation test dataset
+        for i in range(self.window_len, self.val_test_len):
+            # appending window_len values to X_test
+            self.X_val_test.append(self.val_test_data_norm[i -
+                                   self.window_len:i])
+            # appending single y value to y_test
+            self.y_val_test.append(self.val_test_data_norm[i])
+
+        # converting X_test and y_test to a numpy arrays
+        self.X_val_test = np.array(self.X_val_test)
+        self.y_val_test = np.array(self.y_val_test)
+
+        # reshaping to enforce shape requirements
+        self.X_val_test = np.reshape(self.X_val_test,
+                                     (self.X_val_test.shape[0],
+                                      self.X_val_test.shape[1], 1))
+
         # assertions to ensure datasets are of correct sizes
         assert self.X_train.shape[0] == (self.train_len - self.window_len)
         assert self.X_train.shape[1] == self.window_len
 
         assert self.X_test.shape[0] == (self.test_len - self.window_len)
         assert self.X_test.shape[1] == self.window_len
+
+        assert self.X_val_train.shape[0] == (self.val_train_len -
+                                             self.window_len)
+        assert self.X_val_train.shape[1] == self.window_len
+
+        assert self.X_val_test.shape[0] == (self.val_test_len -
+                                            self.window_len)
+        assert self.X_val_test.shape[1] == self.window_len
 
     def extract_real_prices(self, y_pred, y_dummy):
         """
@@ -202,16 +290,18 @@ class Data_Reader:
 
         Parameters
         ----------
-            window_len (int):
-                length of prediction horizon in days
+            y_pred (array):
+                y values predicted by a model from X
+
+            y_dummy (array):
+                y avlues predicted by Base_Model class from X
 
         Example
         -------
-            d_reader.extract_xy()
-            d_reader.X_train
-            d_reader.y_train
-            d_reader.X_test
-            d_reader.y_test
+            d_reader.extract_real_prices()
+            d_reader.actual_price
+            d_reader.predicted_price
+            d_reader.dummy_price
 
         Returns
         -------
