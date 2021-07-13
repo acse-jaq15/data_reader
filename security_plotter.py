@@ -59,7 +59,8 @@ class Security_Plotter:
                 'Gilt10y': '10y British Gilt yield',
                 'Treasury10y': '10y US Treasury yield',
                 'Amazon': 'Amazon.com Inc. common stock price',
-                'Google': 'Alphabet Inc. class A common stock price'
+                'Google': 'Alphabet Inc. class A common stock price',
+                'Nvidia': 'Nvidia Corporation common stock price'
                 }
 
     def single_plot(self):
@@ -121,6 +122,3 @@ class Security_Plotter:
         ax.xaxis.set_major_locator(months)
         ax.xaxis.set_major_formatter(d_format)
         ax.xaxis.set_minor_locator(years)
-
-    def save_single_plot(self, security_str, model_str, directory_str):
-        self.fig.savefig(directory_str+'_'+model_str+'_'+security_str+'_plot.png')
