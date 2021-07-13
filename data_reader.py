@@ -38,7 +38,8 @@ class Data_Reader:
                 Equities
                 --------
                 'Amazon' - NASDQ listed Amazon.com Inc. common stock
-                'Google' - NASDAQ Alphabet Inc. class A common stock
+                'Google' - NASDAQ listed Alphabet Inc. class A common stock
+                'Nvidia' - NASDAQ listed NVIDIA Corporation common stock
 
             Note, all quotes are daily closing prices or yield
 
@@ -74,7 +75,8 @@ class Data_Reader:
                         'Gilt10y': '10y British Gilt yield',
                         'Treasury10y': '10y US Treasury yield',
                         'Amazon': 'Amazon.com Inc. common stock price',
-                        'Google': 'Alphabet Inc. class A common stock price'
+                        'Google': 'Alphabet Inc. class A common stock price',
+                        'Nvidia': 'Nvidia Corporation common stock price'
                             }
 
     def extract_train_test(self):
