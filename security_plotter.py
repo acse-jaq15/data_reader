@@ -97,9 +97,9 @@ class Security_Plotter:
         d_format = mdates.DateFormatter('%Y-%b')
 
         # creating our figure and axes
-        fig, ax = plt.subplots()
+        self.fig, ax = plt.subplots()
         # setting image size inches
-        fig.set_size_inches(12, 6)
+        self.fig.set_size_inches(12, 6)
         # plotting the various y values
         ax.plot(series_dates, self.y_actual, label='Acutal Price')
         ax.plot(series_dates, self.y_pred, label='Predicted Price')
@@ -115,12 +115,12 @@ class Security_Plotter:
         # informing matplotlib that x axis contains dates
         ax.xaxis_date()
         # implementing the formatter
-        fig.autofmt_xdate()
+        self.fig.autofmt_xdate()
 
         # setting minor and major locators and format
         ax.xaxis.set_major_locator(months)
         ax.xaxis.set_major_formatter(d_format)
         ax.xaxis.set_minor_locator(years)
-        
-        return fig, ax
-    
+
+    def save_single_plot(self, security_str, model_str, directory_str):
+        self.fig.savefig(directory_str+'_'+model_str+'_'+security_str+'_plot.png')
