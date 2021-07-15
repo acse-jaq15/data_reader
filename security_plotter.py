@@ -8,7 +8,7 @@ class Security_Plotter:
     """Class to perform plotting"""
 
     def __init__(self, date_series, y_actual, y_pred, y_dummy, train_len,
-                 window_len, security_str):
+                 window_len, security_str, model_str):
         """
         Initialiser for Security_Plotter class
 
@@ -35,6 +35,9 @@ class Security_Plotter:
             security_str (str):
                 a string of the relevant security
 
+            model_str (str):
+                a string of the relevant model
+
         Example
         -------
             Security_Plotter(dates, actual_prices, pred_prices, dummy_prices,
@@ -48,6 +51,7 @@ class Security_Plotter:
         self.train_len = train_len
         self.window_len = window_len
         self.security_str = security_str
+        self.model_str = model_str
         self.security_dict = {
                 'Al': 'LME Aluminium 3m futures price',
                 'Cu': 'LME Copper 3m futures price',
@@ -110,7 +114,8 @@ class Security_Plotter:
         # getting y axis label from .security_dict attribute
         ax.set_ylabel(self.security_dict[self.security_str])
         # setting title
-        ax.set_title(self.security_str+' Acutal, Predicted and Dummy Prices')
+        ax.set_title(self.model_str + ' ' + self.security_str
+                     + ' Acutal, Predicted and Dummy Prices')
         # defining legend
         ax.legend()
         # informing matplotlib that x axis contains dates
