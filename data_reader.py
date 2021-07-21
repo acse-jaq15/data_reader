@@ -170,7 +170,7 @@ class Data_Reader:
         self.val_test_data_norm = self.scaler_val.fit_transform(
             self.val_test_data)
 
-    def extract_xy(self, window_len):
+    def extract_xy(self, window_len, time_distributed=False):
         """
         Method to extract X and y values from training, test and
         validation datasets
@@ -181,6 +181,26 @@ class Data_Reader:
         ----------
             window_len (int):
                 length of prediction horizon in days
+
+            time_distributed (bool):
+                bool to instigate reshaping of X array class attributes to
+                ensure compatability with TimeDistributed Keras layers
+
+                shape is changed from:
+                    [samples, window_len, features]
+
+                to:
+                    [samples, subsequences, window_len, features]
+
+                where:
+                    - samples = number of window_len timesteps from which
+                        predictions are made
+                    - subsequences = 1
+                    - window_len = length of timesteps from which predictions
+                        are made
+                    - features = 1
+
+                default value is False
 
         Example
         -------
@@ -292,6 +312,17 @@ class Data_Reader:
         assert self.X_val_test.shape[0] == (self.val_test_len -
                                             self.window_len)
         assert self.X_val_test.shape[1] == self.window_len
+
+        # if time_distributed bool is True, X arrays are reshaped
+        if time_distributed:
+            self.X_val_train = self.X_val_train.reshape(
+                (self.X_val_train.shape[0], 1, self.window_len, 1))
+            self.X_val_test = self.X_val_test.reshape(
+                (self.X_val_test.shape[0], 1, self.window_len, 1))
+            self.X_train = self.X_train.reshape(
+                (self.X_train.shape[0], 1, self.window_len, 1))
+            self.X_test = self.X_test.reshape(
+                (self.X_test.shape[0], 1, self.window_len, 1))
 
     def extract_real_prices(self, y_pred, y_dummy):
         """
