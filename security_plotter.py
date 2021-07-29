@@ -1,6 +1,8 @@
 """Module containing a class to handle plotting"""
+import numpy as np
 import pandas as pd
 import matplotlib.dates as mdates
+import matplotlib.lines as Line2D
 import matplotlib.pyplot as plt
 
 
@@ -118,6 +120,94 @@ class Security_Plotter:
                      + ' Acutal, Predicted and Dummy Prices')
         # defining legend
         ax.legend()
+        # informing matplotlib that x axis contains dates
+        ax.xaxis_date()
+        # implementing the formatter
+        self.fig.autofmt_xdate()
+
+        # setting minor and major locators and format
+        ax.xaxis.set_major_locator(months)
+        ax.xaxis.set_major_formatter(d_format)
+        ax.xaxis.set_minor_locator(years)
+
+    def single_plot_extended(self, output_len):
+        """
+        Method to plot y_acutal, y_pred and y_dummy from an extended
+        prediction horizon
+
+        Parameters
+        ----------
+            output_len (int):
+                the length of the prediction window in days
+
+        Example
+        -------
+            Security_Plotter.plot(250, 30)
+
+        Returns
+        -------
+            plot of prices, to console or notebook
+        """
+
+        # converting to datetime date format and slicing
+        date_time = self.date_series.data.date[self.train_len +
+                                               self.window_len:]
+        # converting the series to datetime using pandas
+        series_dates = pd.to_datetime(date_time).dt.date
+        # resetting index to 0 based
+        series_dates = series_dates.reset_index(drop=True)
+        # converting to matplotlib format
+        series_dates = mdates.date2num(series_dates)
+
+        # setting YearLocator
+        years = mdates.YearLocator()
+        # setting MonthLocator
+        months = mdates.MonthLocator()
+        # setting format to give year and verbose month '2019-Jan'
+        d_format = mdates.DateFormatter('%Y-%b')
+
+        # defining y_pred_plot to hold each prediction, initialised to 0s
+        self.y_pred_plot = np.zeros((self.train_len, self.train_len))
+
+        # a loop to populate y_pred_plot with the relevant element from y_pred
+        start_index = 0
+        # moving through each prediction stopping before the final prediction
+        for i in range(0, self.train_len - output_len):
+            for j in range(0, output_len):
+                self.y_pred_plot[i][start_index + j] = self.y_pred[i][j]
+            # incrementing start_index to move the first non-zero of element
+            #  of y_pred_plot one column to the right for each new row
+            start_index += 1
+
+        # converting 0s to nans to allow for easy plotting
+        self.y_pred_plot[self.y_pred_plot == 0] = np.nan
+
+        # creating our figure and axes
+        self.fig, ax = plt.subplots()
+        # setting image size inches
+        self.fig.set_size_inches(12, 6)
+        # plotting the various y values
+        ax.plot(series_dates, self.y_actual, label='Acutal Price')
+        ax.plot(series_dates, self.y_dummy, label='Dummy Price')
+        # a loop to plot each prediction from the model
+        for i in range(0, self.train_len - output_len):
+            ax.plot(series_dates, self.y_pred_plot[i], linestyle='dotted')
+        # setting x axis label
+        ax.set_xlabel('Date')
+        # getting y axis label from .security_dict attribute
+        ax.set_ylabel(self.security_dict[self.security_str])
+        # setting title
+        ax.set_title(self.model_str + ' ' + self.security_str
+                     + ' Acutal, Predicted and Dummy Prices')
+        # creating a manually entered legend line to denote predictions
+        legend_line = Line2D([0], [0], label='Predicted Prices',
+                             linestyle='dotted', color='k')
+        # assigning handles and labels
+        handles, labels = ax.get_legend_handles_labels()
+        # including legend_line
+        handles.extend([legend_line])
+        # defining legend
+        ax.legend(handles=handles)
         # informing matplotlib that x axis contains dates
         ax.xaxis_date()
         # implementing the formatter
