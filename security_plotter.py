@@ -167,12 +167,13 @@ class Security_Plotter:
         d_format = mdates.DateFormatter('%Y-%b')
 
         # defining y_pred_plot to hold each prediction, initialised to 0s
-        self.y_pred_plot = np.zeros((self.train_len, self.train_len))
+        self.y_pred_plot = np.zeros((self.y_pred.shape[0],
+                                     self.y_pred.shape[0]))
 
         # a loop to populate y_pred_plot with the relevant element from y_pred
         start_index = 0
         # moving through each prediction stopping before the final prediction
-        for i in range(0, self.train_len - output_len):
+        for i in range(0, self.y_pred.shape[0] - output_len):
             for j in range(0, output_len):
                 self.y_pred_plot[i][start_index + j] = self.y_pred[i][j]
             # incrementing start_index to move the first non-zero of element
