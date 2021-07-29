@@ -13,7 +13,6 @@ class Data_Reader:
 
         Parameters
         ----------
-
             filename (str):
                 The file to be read, must be chosen from the following:
 
@@ -323,6 +322,102 @@ class Data_Reader:
                 (self.X_train.shape[0], 1, self.window_len, 1))
             self.X_test = self.X_test.reshape(
                 (self.X_test.shape[0], 1, self.window_len, 1))
+
+    def extract_xy_extended(self, window_len, time_distributed=False, output_len=15):
+        """
+        Method to extract X and y values from training, test and
+        validation datasets
+
+        Creates Data_reader.X_train, .y_train, .X_test and .y_test attributes
+
+        Parameters
+        ----------
+            window_len (int):
+                length of prediction horizon in days
+
+            time_distributed (bool):
+                bool to instigate reshaping of X array class attributes to
+                ensure compatability with TimeDistributed Keras layers
+
+                shape is changed from:
+                    [samples, window_len, features]
+
+                to:
+                    [samples, subsequences, window_len, features]
+
+                where:
+                    - samples = number of window_len timesteps from which
+                        predictions are made
+                    - subsequences = 1
+                    - window_len = length of timesteps from which predictions
+                        are made
+                    - features = 1
+
+                default value is False
+
+        Example
+        -------
+            d_reader.extract_xy()
+            d_reader.X_train
+            d_reader.y_train
+            d_reader.X_test
+            d_reader.y_test
+            d_reader.X_val_train
+            d_reader.X_val_test
+            d_reader.y_val_train
+            d_reader.y_val_test
+
+        Returns
+        -------
+            None
+        """
+
+        # defining the prediction horizon
+        self.window_len = window_len
+        # defining the length of prediction
+        self.output_len = output_len
+
+        # creating lists to store X and y values for training and testing
+        self.X_train = []
+        self.y_train = []
+        self.X_test = []
+        self.y_test = []
+
+        # creating lists to store X and y values for validation
+        self.X_val_train = []
+        self.y_val_train = []
+        self.X_val_test = []
+        self.y_val_test = []
+
+        # a loop to iterate through the training dataset
+        for i in range(self.window_len, self.train_len):
+            # appending window_len values to X_train
+            self.X_train.append(self.train_data_norm[i - self.window_len:i])
+            # appending single y value to y_train
+            self.y_train.append(self.train_data_norm[i - self.output_len:i])
+
+        # converting X_train and y_train to numpy arrays
+        self.X_train = np.array(self.X_train)
+        self.y_train = np.array(self.y_train)
+
+        # reshaping to enforce shape requirements
+        self.X_train = np.reshape(self.X_train, (self.X_train.shape[0],
+                                                 self.X_train.shape[1], 1))
+
+        # a loop to iterate through the test dataset
+        for i in range(self.window_len, self.test_len):
+            # appending window_len values to X_test
+            self.X_test.append(self.test_data_norm[i - self.window_len:i])
+            # appending single y value to y_test
+            self.y_test.append(self.test_data_norm[i - self.output_len:i])
+
+        # converting X_test and y_test to a numpy arrays
+        self.X_test = np.array(self.X_test)
+        self.y_test = np.array(self.y_test)
+
+        # reshaping to enforce shape requirements
+        self.X_test = np.reshape(self.X_test, (self.X_test.shape[0],
+                                               self.X_test.shape[1], 1))
 
     def extract_real_prices(self, y_pred, y_dummy):
         """
