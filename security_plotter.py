@@ -191,7 +191,7 @@ class Security_Plotter:
         ax.plot(series_dates, self.y_actual, label='Acutal Price')
         ax.plot(series_dates, self.y_dummy, label='Dummy Price')
         # a loop to plot each prediction from the model
-        for i in range(0, self.train_len - output_len):
+        for i in range(0, self.y_pred.shape[0] - output_len):
             ax.plot(series_dates, self.y_pred_plot[i], linestyle='dotted')
         # setting x axis label
         ax.set_xlabel('Date')
