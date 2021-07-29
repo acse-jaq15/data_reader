@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.dates as mdates
-import matplotlib.lines as Line2D
+import matplotlib.lines as lines
 import matplotlib.pyplot as plt
 
 
@@ -201,8 +201,8 @@ class Security_Plotter:
         ax.set_title(self.model_str + ' ' + self.security_str
                      + ' Acutal, Predicted and Dummy Prices')
         # creating a manually entered legend line to denote predictions
-        legend_line = Line2D([0], [0], label='Predicted Prices',
-                             linestyle='dotted', color='k')
+        legend_line = lines.Line2D([0], [0], label='Predicted Prices',
+                                   linestyle='dotted', color='k')
         # assigning handles and labels
         handles, labels = ax.get_legend_handles_labels()
         # including legend_line
