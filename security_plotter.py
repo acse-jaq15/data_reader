@@ -199,7 +199,7 @@ class Security_Plotter:
         ax.set_ylabel(self.security_dict[self.security_str])
         # setting title
         ax.set_title(self.model_str + ' ' + self.security_str
-                     + ' Acutal, Predicted and Dummy Prices')
+                     + ' Extended Acutal, Predicted and Dummy Prices')
         # creating a manually entered legend line to denote predictions
         legend_line = lines.Line2D([0], [0], label='Predicted Prices',
                                    linestyle='dotted', color='k')
