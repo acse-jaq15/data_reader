@@ -1,4 +1,4 @@
-best_configs : {
+'best_configs' : {
 	
 	'CNN_Al' : {
 	    'epochs': 200,
