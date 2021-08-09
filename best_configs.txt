@@ -253,6 +253,7 @@
 	    'activation': 'selu'
 	},	
 	'GRU_Al' : {
+	        'epochs': 200,
 	        'batch_size': 32,
 	        'dropout': 0.3,
 	        'input_size': 50,
@@ -262,6 +263,7 @@
 	        'activation': 'tanh',
 	    },	
 	'GRU_Cu' : {
+	        'epochs': 200,
 	        'batch_size': 64,
 	        'dropout': 0.2,
 	        'input_size': 50,
@@ -271,6 +273,7 @@
 	        'activation': 'tanh',
 	    },	
 	'GRU_Corn' : {
+	        'epochs': 100,
 	        'batch_size': 64,
 	        'dropout': 0.2,
 	        'input_size': 100,
@@ -280,6 +283,7 @@
 	        'activation': 'selu',
 	    },	
 	'GRU_EURCHF' : {
+	        'epochs': 200,
 	        'batch_size': 32,
 	        'dropout': 0.4,
 	        'input_size': 100,
@@ -289,6 +293,7 @@
 	        'activation': 'selu',
 	    },	
 	'GRU_EURUSD' : {
+	        'epochs': 200,
 	        'batch_size': 32,
 	        'dropout': 0.2,
 	        'input_size': 100,
@@ -298,6 +303,7 @@
 	        'activation': 'tanh',
 	    },	
 	'GRU_GBPUSD' : {
+	        'epochs': 50,
 	        'batch_size': 32,
 	        'dropout': 0.2,
 	        'input_size': 100,
@@ -307,6 +313,7 @@
 	        'activation': 'tanh',
 	    },	
 	'GRU_Gilt10y' : {
+	        'epochs': 200,
 	        'batch_size': 32,
 	        'dropout': 0.2,
 	        'input_size': 100,
@@ -316,6 +323,7 @@
 	        'activation': 'tanh',
 	    },	
 	'GRU_Bund10y' : {
+	        'epochs': 200,
 	        'batch_size': 32,
 	        'dropout': 0.4,
 	        'input_size': 50,
@@ -325,6 +333,7 @@
 	        'activation': 'tanh',
 	    },	
 	'GRU_Treasury10y' : {
+	        'epochs': 200,
 	        'batch_size': 32,
 	        'dropout': 0.4,
 	        'input_size': 100,
@@ -334,6 +343,7 @@
 	        'activation': 'selu',
 	    },	
 	'GRU_Amazon' : {
+	        'epochs': 200,
 	        'batch_size': 32,
 	        'dropout': 0.2,
 	        'input_size': 50,
@@ -343,6 +353,7 @@
 	        'activation': 'tanh',
 	    },	
 	'GRU_Google' : {
+	        'epochs': 200,
 	        'batch_size': 64,
 	        'dropout': 0.3,
 	        'input_size': 100,
@@ -352,6 +363,7 @@
 	        'activation': 'selu',
 	    },	
 	'GRU_Nvidia' : {
+	        'epochs': 100,
 	        'batch_size': 64,
 	        'dropout': 0.2,
 	        'input_size': 100,
