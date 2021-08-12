@@ -78,12 +78,17 @@ class Data_Reader:
                         'Nvidia': 'Nvidia Corporation common stock price'
                             }
 
+        # creating a bool to keep track of method calls
+        self.tt_bool = False
+
     def extract_train_test(self):
         """
         Method to extract training, test and validation datasets
 
-        Creates Data_reader.train_data, .test_data, .val_train_data
-        and .val_test_data attributes
+        Creates Data_reader.train_data, .train_data_norm, .test_data,
+        .test_data_norm, .val_train_data, .val_train_data_norm, .val_test_data
+        and .val_test_data_norm attributes, where '_norm' suffixed attributes
+        contain normalised prices of relevant attribute without '_norm' suffix
 
         Parameters
         ----------
@@ -93,9 +98,13 @@ class Data_Reader:
         -------
             d_reader.extract_train_test()
             d_reader.train_data
+            d_reader.train_data_norm
             d_reader.test_data
+            d_reader.test_data_norm
             d_reader.val_train_data
+            d_reader.val_train_data_norm
             d_reader.val_test_data
+            d_reader.val_test_data_norm
 
         Returns
         -------
@@ -169,12 +178,16 @@ class Data_Reader:
         self.val_test_data_norm = self.scaler_val.fit_transform(
             self.val_test_data)
 
+        # setting tt_bool to true
+        self.tt_bool = True
+
     def extract_xy(self, window_len, time_distributed=False):
         """
         Method to extract X and y values from training, test and
         validation datasets
 
-        Creates Data_reader.X_train, .y_train, .X_test and .y_test attributes
+        Creates Data_reader.X_train, .y_train, .X_test, .y_test,
+        .X_val_train, .y_val_train, .X_val_test and .y_val_test attributes
 
         Parameters
         ----------
@@ -217,6 +230,10 @@ class Data_Reader:
         -------
             None
         """
+
+        # logic to ensure .extract_train_test() has been called
+        if not self.tt_bool:
+            raise Exception('call .extract_train_test() first')
 
         # defining the prediction horizon
         self.window_len = window_len
@@ -323,10 +340,11 @@ class Data_Reader:
             self.X_test = self.X_test.reshape(
                 (self.X_test.shape[0], 1, self.window_len, 1))
 
-    def extract_xy_extended(self, window_len, time_distributed=False, output_len=15):
+    def extract_xy_extended(self, window_len, time_distributed=False,
+                            output_len=15):
         """
-        Method to extract X and y values from training, test and
-        validation datasets
+        Method to extract X and y values from training and test datasets
+        when using an extended prediction horizon
 
         Creates Data_reader.X_train, .y_train, .X_test and .y_test attributes
 

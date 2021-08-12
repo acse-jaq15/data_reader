@@ -47,8 +47,8 @@ class Trained_Model:
                         'LSTM_AE' - stacked LSTM autoencoder
                         'LSTM_GRU' - stacked LSTM GRU hybrid
 
-                    Multi-Layer Perceptron
-                    ----------------------
+                    Multi-Layer Perceptron (MLP)
+                    ----------------------------
                         'MLP' - Multi-layer perceptron
                         'MLP_AE' - Multi-layer perceptron autoencoder
 
